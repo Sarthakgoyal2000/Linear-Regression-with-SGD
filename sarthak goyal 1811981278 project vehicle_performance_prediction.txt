@@ -1,0 +1,207 @@
+import pandas as pd
+from pandas import DataFrame
+from sklearn import linear_model
+import tkinter as tk 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+data=pd.read_csv('cardata.csv')
+
+vehicles_data=data
+df = DataFrame(vehicles_data,columns=['origin','cylinders','displacement','year','Kilometer_per_liter']) 
+
+X = df[['origin','cylinders','displacement','year']].astype(float) 
+Y=df['Kilometer_per_liter'].astype(float)
+regr = linear_model.LinearRegression()
+regr.fit(X, Y)
+
+print('Intercept: \n', regr.intercept_)
+print('Coefficients: \n', regr.coef_)
+root= tk.Tk()
+
+canvas1 = tk.Canvas(root, width = 500, height = 300)
+canvas1.pack()
+
+Intercept_result = ('Intercept: ', regr.intercept_)
+label_Intercept = tk.Label(root, text=Intercept_result, justify = 'center')
+canvas1.create_window(260, 220, window=label_Intercept)
+
+
+Coefficients_result  = ('Coefficients: ', regr.coef_)
+label_Coefficients = tk.Label(root, text=Coefficients_result, justify = 'center')
+canvas1.create_window(260, 240, window=label_Coefficients)
+
+
+label1 = tk.Label(root, text='Type origin: ')
+canvas1.create_window(100, 100, window=label1)
+
+entry1 = tk.Entry (root) 
+canvas1.create_window(270, 100, window=entry1)
+
+label2 = tk.Label(root, text=' Type cylinders: ')
+canvas1.create_window(105, 120, window=label2)
+
+entry2 = tk.Entry (root) 
+canvas1.create_window(270, 120, window=entry2)
+
+label3 = tk.Label(root, text=' Type displacement: ')
+canvas1.create_window(115, 140, window=label3)
+
+entry3 = tk.Entry (root) 
+canvas1.create_window(270, 140, window=entry3)
+
+label4 = tk.Label(root, text=' Type year: ')
+canvas1.create_window(90, 160, window=label4)
+
+entry4 = tk.Entry (root) 
+canvas1.create_window(270, 160, window=entry4)
+
+def values(): 
+    global New_origin 
+    New_origin = float(entry1.get()) 
+    
+    global New_cylinders 
+    New_cylinders = float(entry2.get())
+    
+    global New_displacement 
+    New_displacement = float(entry3.get())
+    
+    global New_year 
+    New_year = float(entry4.get())
+    
+    Prediction_result  = ('Predicted vehicle_price: ', regr.predict([[New_origin ,New_cylinders,New_displacement,New_year]]))
+    label_Prediction = tk.Label(root, text= Prediction_result, bg='yellow')
+    canvas1.create_window(310, 280, window=label_Prediction)
+    
+button1 = tk.Button (root, text='Predict vehicle_price ',command=values, bg='orange') 
+canvas1.create_window(300, 270, window=button1)
+ 
+figure3 = plt.Figure(figsize=(4,4), dpi=100)
+ax3 = figure3.add_subplot(111)
+ax3.scatter(df['origin'].astype(float),df['Kilometer_per_liter'].astype(float), color = 'r')
+scatter3 = FigureCanvasTkAgg(figure3, root) 
+scatter3.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax3.legend() 
+ax3.set_xlabel('origin')
+ax3.set_title('origin Vs. Kilometer_per_liter')
+
+
+figure4 = plt.Figure(figsize=(4,4), dpi=100)
+ax4 = figure4.add_subplot(111)
+ax4.scatter(df['cylinders'].astype(float),df['Kilometer_per_liter'].astype(float), color = 'g')
+scatter4 = FigureCanvasTkAgg(figure4, root) 
+scatter4.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax4.legend() 
+ax4.set_xlabel('cylinders')
+ax4.set_title('cylinders Vs. Kilometer_per_liter')
+
+
+figure5 = plt.Figure(figsize=(4,4), dpi=100)
+ax5 = figure5.add_subplot(111)
+ax5.scatter(df['displacement'].astype(float),df['Kilometer_per_liter'].astype(float), color = 'y')
+scatter5 = FigureCanvasTkAgg(figure5, root) 
+scatter5.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax5.legend() 
+ax5.set_xlabel('displacement')
+ax5.set_title('displacement Vs. Kilometer_per_liter')
+
+figure7 = plt.Figure(figsize=(4,4), dpi=100)
+ax7 = figure7.add_subplot(111)
+ax7.scatter(df['year'].astype(float),df['Kilometer_per_liter'].astype(float), color = 'crimson')
+scatter7 = FigureCanvasTkAgg(figure7, root) 
+scatter7.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax7.legend() 
+ax7.set_xlabel('year')
+ax7.set_title('year Vs. Kilometer_per_liter')
+
+root.mainloop()
+########################################################################################################################################################################################################################################################################################################
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+pima = pd.read_csv("cardata.csv")
+#print(pima.head())
+
+feature_cols = ['origin','cylinders','year']
+X = pima[feature_cols] # Features
+y = pima['origin'] # Target variable
+
+#################################################
+
+
+from sklearn.model_selection import train_test_split
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.25,random_state=0)
+
+
+###########################################
+
+
+
+from sklearn.linear_model import LogisticRegression
+
+logreg = LogisticRegression()
+
+# fit the model with data
+logreg.fit(X_train,y_train)
+
+y_pred=logreg.predict(X_test)
+
+##############################################
+from sklearn import metrics
+cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
+print(cnf_matrix)
+###########################################
+
+
+class_names=[0,1] # name  of classes
+fig, ax = plt.subplots()
+tick_marks = np.arange(len(class_names))
+plt.xticks(tick_marks, class_names)
+plt.yticks(tick_marks, class_names)
+# create heatmap
+"""data – 2D dataset that can be coerced into an ndarray. If a Pandas DataFrame is provided, the index/column information will be used to label the columns and rows.
+annot – an array of same shape as data which is used to annotate the heatmap.
+cmap – a matplotlib colormap name or object. This maps the data values to the color space.
+fmt – string formatting code to use when adding annotations.
+linewidths – sets the width of the lines that will divide each cell."""
+
+sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
+ax.xaxis.set_label_position("top")
+#position : {'top', 'bottom'}
+
+plt.tight_layout()
+plt.title('Confusion matrix', y=1.1)
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+print("Precision:",metrics.precision_score(y_test, y_pred))
+print("Recall:",metrics.recall_score(y_test, y_pred))
+
+"""Precision: Precision is about being precise, i.e.,
+how accurate your model is. In other words, you can say,
+when a model makes a prediction, how often it is correct.
+In your prediction case, when your Logistic Regression model
+predicted patients are going to suffer from diabetes,
+that patients have 76% of the time.
+
+Recall: If there are patients who have diabetes in the test set
+and your Logistic Regression model can identify it 58% of the time.
+
+"""
+"""Receiver Operating Characteristic(ROC) curve is a plot
+of the true positive rate against the false positive rate.
+It shows the tradeoff between sensitivity and specificity."""
+
+y_pred_proba = logreg.predict_proba(X_test)[::,1]
+fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba)
+auc = metrics.roc_auc_score(y_test, y_pred_proba)
+plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+plt.legend(loc=4)
+plt.show()
+
+"""AUC score for the case is 0.86. AUC score 1 represents perfect classifier,
+and 0.5 represents a worthless classifier."""
